@@ -30,9 +30,9 @@ def generate_unsorted_list(size: int) -> list:
 
 def time_sort(sorting_method: Callable[[list], list], mylist: list) -> tuple[list, float]:
     copied_list = mylist.copy()
-    start = time.time()
+    start = time.perf_counter_ns()
     sorted_list = sorting_method(copied_list) 
-    end = time.time()
+    end = time.perf_counter_ns()
     elapsed_time = end - start
     return sorted_list, elapsed_time
 
