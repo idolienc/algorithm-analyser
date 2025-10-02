@@ -33,17 +33,19 @@ def time_sort(sorting_method: Callable[[list], list], mylist: list) -> tuple[lis
     start = time.perf_counter_ns()
     sorted_list = sorting_method(copied_list) 
     end = time.perf_counter_ns()
-    elapsed_time = end - start
+    elapsed_time = (end - start) / 1_000_000_000  
     return sorted_list, elapsed_time
 
 def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: list):
-    plt.plot(element_count, sort_times_one, marker='o')
-    plt.plot(element_count, sort_times_two, marker='o')
-    plt.title('Sort Efficiency Comparison')
+    plt.plot(element_count, sort_times_one, label="Insertion Sort", marker='o')
+    plt.plot(element_count, sort_times_two, label="Bubble Sort", marker='o')
+    plt.title('Sort Elapsed Time Comparison')
     plt.xlabel('Number of Elements')
     plt.ylabel('Time Taken (seconds)')
+    plt.legend(loc="upper left")
     plt.xticks(element_count, rotation=45)
-    plt.ylim(0, max(sort_times_one) * 0.9)
+    plt.ylim(0, max(max(sort_times_one), max(sort_times_two)) * 1.1)
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xscale("log")
     plt.grid(True)
     plt.show()
@@ -56,17 +58,13 @@ def main():
     for i in range(len(element_count)):
         unsorted_lists.append(generate_unsorted_list(element_count[i]))
         insertion_sort_result, insertion_elapsed = time_sort(insertion_sort, unsorted_lists[i])
-        print(f"Insertion: Sorted list in {insertion_elapsed:.4f} seconds")
         insertion_times.append(insertion_elapsed)
-    print(insertion_times)
 
     bubble_times = []
     for i in range(len(element_count)):
         unsorted_lists.append(generate_unsorted_list(element_count[i]))
         bubble_sort_result, bubble_elapsed = time_sort(bubble_sort, unsorted_lists[i])
-        print(f"Bubble: Sorted list in {bubble_elapsed:.4f} seconds")
         bubble_times.append(bubble_elapsed)
-    print(bubble_times)
 
     graph_efficiency(element_count, insertion_times, bubble_times)
 
