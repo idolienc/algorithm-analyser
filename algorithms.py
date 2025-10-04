@@ -65,7 +65,6 @@ def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: 
     plt.title('Sort Elapsed Time Comparison')
     plt.xlabel('Number of Elements')
     plt.ylabel('Time Taken (seconds)')
-    plt.legend(loc="upper left")
     plt.xticks(element_count, rotation=45)
     plt.xscale("log")
     plt.ylim(0, max(max(sort_times_one), max(sort_times_two)) * 1.1)
@@ -73,6 +72,7 @@ def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: 
     plt.grid(True)
     plt.plot(element_count, sort_times_one, label="Insertion Sort", marker='o')
     plt.plot(element_count, sort_times_two, label="Bubble Sort", marker='o')
+    plt.legend(loc="upper left")
     plt.show()
 
 def main():
