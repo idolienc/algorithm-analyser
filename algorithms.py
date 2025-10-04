@@ -1,35 +1,57 @@
 import time, random
 import matplotlib.pyplot as plt
 from collections.abc import Callable
+from typing import TypeVar
 
-def bubble_sort(mylist: list) -> list:
-    for i in range(len(mylist)-1):
-        for x in range(len(mylist)-(1+i)):
-            if mylist[x] > mylist[x+1]:
-                mylist[x], mylist[x+1] = mylist[x+1], mylist[x]
-    return mylist
+T = TypeVar('T')
 
-def insertion_sort(mylist: list) -> list:
-    sortedlist = []
-    for i in range(len(mylist)):
-        insert_into_sorted(sortedlist, mylist[i])
-    return sortedlist
+def bubble_sort(lst: list[T]) -> None:
+    """Sorts a list in-place by comparing elements 
+    and swapping them if the elements are in the wrong order.
 
-def insert_into_sorted(mylist: list, element: int) -> None:
-    for i in range(len(mylist)):
-        if element < mylist[i]:
-            mylist.insert(i, element)
+    Time complexity is O(n^2).
+    """
+    for i in range(len(lst)-1):
+        for j in range(len(lst)-(1+i)):
+            if lst[j] > lst[j+1]:
+                lst[j], lst[j+1] = lst[j+1], lst[j]
+
+def insertion_sort(lst: list[T]) -> list[T]:
+    """Sorts an unsorted list by inserting elements
+    in order into a new list, which is returned by the function.
+
+    Time complexity is O(n^2)
+    """
+    sorted_list = []
+    for element in lst:
+        insert_into_sorted(sorted_list, element)
+    return sorted_list
+
+def insert_into_sorted(lst: list[T], element: T) -> None:
+    """Modifies an already ascendingly sorted list 
+    in-place by inserting a new element while maintaining 
+    the sort order.
+    """
+    for i in range(len(lst)):
+        if element < lst[i]:
+            lst.insert(i, element)
             return
-    mylist.append(element)
+    lst.append(element)
 
-def generate_unsorted_list(size: int) -> list:
+def generate_unsorted_list(size: int) -> list[int]:
+    """Generates an unsorted list containing 
+    integers ranging from 1 to 1,000,000
+    """
     unsorted_list = []
     for i in range(size):
         unsorted_list.append(random.randint(1, 1000000))
     return unsorted_list
 
-def time_sort(sorting_method: Callable[[list], list], mylist: list) -> tuple[list, float]:
-    copied_list = mylist.copy()
+def timer(sorting_method: Callable[[list], list], lst: list) -> tuple[list, float]:
+    """Times how long it takes for each sorting method to sort a list, if incorrectly
+    ordered, and then return it. Returns the sorted list and elapsed time, in seconds, as a tuple.
+    """
+    copied_list = lst.copy()
     start = time.perf_counter_ns()
     sorted_list = sorting_method(copied_list) 
     end = time.perf_counter_ns()
@@ -37,17 +59,20 @@ def time_sort(sorting_method: Callable[[list], list], mylist: list) -> tuple[lis
     return sorted_list, elapsed_time
 
 def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: list):
-    plt.plot(element_count, sort_times_one, label="Insertion Sort", marker='o')
-    plt.plot(element_count, sort_times_two, label="Bubble Sort", marker='o')
+    """Plots a log-scaled comparison of execution times for two sorting algorithms 
+    over varying input sizes.
+    """
     plt.title('Sort Elapsed Time Comparison')
     plt.xlabel('Number of Elements')
     plt.ylabel('Time Taken (seconds)')
     plt.legend(loc="upper left")
     plt.xticks(element_count, rotation=45)
+    plt.xscale("log")
     plt.ylim(0, max(max(sort_times_one), max(sort_times_two)) * 1.1)
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-    plt.xscale("log")
     plt.grid(True)
+    plt.plot(element_count, sort_times_one, label="Insertion Sort", marker='o')
+    plt.plot(element_count, sort_times_two, label="Bubble Sort", marker='o')
     plt.show()
 
 def main():
@@ -57,13 +82,13 @@ def main():
     insertion_times = []
     for i in range(len(element_count)):
         unsorted_lists.append(generate_unsorted_list(element_count[i]))
-        insertion_sort_result, insertion_elapsed = time_sort(insertion_sort, unsorted_lists[i])
+        insertion_sort_result, insertion_elapsed = timer(insertion_sort, unsorted_lists[i])
         insertion_times.append(insertion_elapsed)
 
     bubble_times = []
     for i in range(len(element_count)):
         unsorted_lists.append(generate_unsorted_list(element_count[i]))
-        bubble_sort_result, bubble_elapsed = time_sort(bubble_sort, unsorted_lists[i])
+        bubble_sort_result, bubble_elapsed = timer(bubble_sort, unsorted_lists[i])
         bubble_times.append(bubble_elapsed)
 
     graph_efficiency(element_count, insertion_times, bubble_times)
