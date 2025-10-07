@@ -1,4 +1,4 @@
-import time, random, itertools
+import time, random
 import matplotlib.pyplot as plt
 from collections.abc import Callable
 from typing import TypeVar
@@ -16,27 +16,21 @@ def bubble_sort(lst: list[T]) -> None:
             if lst[j] > lst[j+1]:
                 lst[j], lst[j+1] = lst[j+1], lst[j]
 
-def insertion_sort(lst: list[T]) -> list[T]:
-    """Sorts an unsorted list by inserting elements
-    in order into a new list, which is returned by the function.
+def insertion_sort(lst: list[T]) -> None:
+    """Sorts a list in-place by building a sorted section
+    on the left. Starting from the second element it swaps
+    backwards until the element is correctly placed, repeating
+    this until elements are correctly sorted.
 
     Time complexity is O(n^2)
     """
-    sorted_list = []
-    for element in lst:
-        insert_into_sorted(sorted_list, element)
-    return sorted_list
-
-def insert_into_sorted(lst: list[T], element: T) -> None:
-    """Modifies an already ascendingly sorted list 
-    in-place by inserting a new element while maintaining 
-    the sort order.
-    """
-    for i in range(len(lst)):
-        if element < lst[i]:
-            lst.insert(i, element)
-            return
-    lst.append(element)
+    i = 1
+    while i < len(lst):
+        j = i
+        while j > 0 and lst[j-1] > lst[j]:
+            lst[j], lst[j-1] = lst[j-1], lst[j]
+            j -= 1
+        i += 1
 
 def generate_unsorted_list(size: int) -> list[int]:
     """Generates an unsorted list containing 
