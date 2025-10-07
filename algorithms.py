@@ -1,4 +1,4 @@
-import time, random
+import time, random, itertools
 import matplotlib.pyplot as plt
 from collections.abc import Callable
 from typing import TypeVar
@@ -58,7 +58,7 @@ def timer(sorting_method: Callable[[list], list], lst: list) -> tuple[list, floa
     elapsed_time = (end - start) / 1_000_000_000  
     return sorted_list, elapsed_time
 
-def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: list):
+def graph_efficiency(element_count: list, **kwargs):
     """Plots a log-scaled comparison of execution times for two sorting algorithms 
     over varying input sizes.
     """
@@ -67,11 +67,11 @@ def graph_efficiency(element_count: list, sort_times_one: list, sort_times_two: 
     plt.ylabel('Time Taken (seconds)')
     plt.xticks(element_count, rotation=45)
     plt.xscale("log")
-    plt.ylim(0, max(max(sort_times_one), max(sort_times_two)) * 1.1)
+    plt.ylim(0, max(max(values) for values in kwargs.values()) * 1.1)
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.grid(True)
-    plt.plot(element_count, sort_times_one, label="Insertion Sort", marker='o')
-    plt.plot(element_count, sort_times_two, label="Bubble Sort", marker='o')
+    for arg in kwargs:
+        plt.plot(element_count, kwargs[arg], label=(arg.replace("_", " ")).title(), marker='o')
     plt.legend(loc="upper left")
     plt.show()
 
@@ -91,6 +91,7 @@ def main():
         bubble_sort_result, bubble_elapsed = timer(bubble_sort, unsorted_lists[i])
         bubble_times.append(bubble_elapsed)
 
-    graph_efficiency(element_count, insertion_times, bubble_times)
+    graph_efficiency(element_count, insertion_times=insertion_times, bubble_times=bubble_times)
 
-main()
+if __name__ == "__main__":
+    main()
