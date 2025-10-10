@@ -95,12 +95,10 @@ def graph_efficiency(element_count: list, **kwargs):
     plt.xlabel('Number of Elements')
     plt.ylabel('Time Taken (seconds)')
     plt.xticks(element_count, rotation=45)
-    plt.xscale("log")
-    plt.ylim(0, max(max(values) for values in kwargs.values()) * 1.1)
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.grid(True)
     for arg in kwargs:
-        plt.plot(element_count, kwargs[arg], label=(arg.replace("_", " ")).title(), marker='o')
+        plt.loglog(element_count, kwargs[arg], label=(arg.replace("_", " ")).title(), marker='o')
     plt.legend(loc="upper left")
     mplcyberpunk.add_glow_effects()
     plt.show()
